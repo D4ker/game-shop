@@ -3,12 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "node server/app.js",
+    "dev": "concurrently \"nodemon server/app.js\" \"npm run serve\"",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.6.0",
+    "concurrently": "^6.0.2",
     "core-js": "^3.6.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "pg": "^8.6.0",
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1"
   },

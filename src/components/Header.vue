@@ -27,8 +27,8 @@
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="#">Настройки</a></li>
               <li><router-link class="dropdown-item" to="/library">Библиотека</router-link></li>
-              <li><a class="dropdown-item" href="#">Список желаемого</a></li>
-              <li><a class="dropdown-item" href="#">Друзья</a></li>
+              <li><router-link class="dropdown-item" to="/wishlist">Список желаемого</router-link></li>
+              <li><router-link class="dropdown-item" to="/friends">Друзья</router-link></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">Выход</a></li>
             </ul>

@@ -17,6 +17,14 @@ export default new Router({
         {
             path: '/library',
             component: () => import('./views/Library.vue')
-        }
+        },
+        {
+            path: '/wishlist',
+            component: () => import('./views/Wishlist.vue')
+        },
+        {
+            path: '/friends',
+            component: () => import('./views/Friends.vue')
+        },
     ]
 })

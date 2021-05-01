@@ -6,44 +6,49 @@
       <rect width="100%" height="100%" fill="#55595c">
 
       </rect>
-      <text x="50%" y="50%" fill="#eceeef" dy=".3em">{{card.name}}</text>
+      <text x="50%" y="50%" fill="#eceeef" dy=".3em">{{game.name}}</text>
     </svg>
 
     <div class="card-body">
       <div>
-        <h4>{{card.name}}</h4>
-        <div class="cost-container">
+        <h4>{{game.name}}</h4>
+        <div v-if="bought !== null"
+            class="cost-container">
           <div class="cost-name">Цена: </div>
           <div class="cost-money"
-               v-bind:class="{'cost-old': card.discount > 0}">
-            {{card.cost.toFixed(2)}}$
+               v-bind:class="{'cost-old': parseInt(game_cost.discount) > 0}">
+            {{parseFloat(game_cost.cost).toFixed(2)}}$
           </div>
           <div class="cost-money"
-               v-if="card.discount > 0">
-            {{costWithDiscount = (card.cost * (1 - card.discount / 100)).toFixed(2)}}$
+               v-if="parseInt(game_cost.discount) > 0">
+            {{costWithDiscount = (parseFloat(game_cost.cost) * (1 - parseInt(game_cost.discount) / 100)).toFixed(2)}}$
           </div>
           <div class="cost-discount"
-               v-if="card.discount > 0">
-            {{card.discount}}%
+               v-if="parseInt(game_cost.discount) > 0">
+            {{parseInt(game_cost.discount)}}%
           </div>
         </div>
       </div>
-      <p class="card-text">{{card.description}}</p>
-      <div class="d-flex justify-content-between align-items-center">
+      <p class="card-text">{{game.description}}</p>
+      <div v-if="bought !== null"
+           class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
           <button type="button" class="btn btn-sm btn-outline-success"
-                  v-bind:class="{'btn-outline-dark disabled': card.bought}"
-                  @click.prevent="buyGame">{{card.bought ? 'Приобретено' : 'Купить'}}</button>
+                  v-bind:class="{'btn-outline-dark disabled': bought}"
+                  @click.prevent="buyGame">{{bought ? 'Приобретено' : 'Купить'}}</button>
         </div>
       </div>
-      <div class="d-flex justify-content-between align-items-center">
+      <div v-if="wish !== null"
+           class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
           <button type="button" class="btn btn-sm btn-outline-warning"
-                  v-bind:class="{'btn-outline-dark disabled': card.wish}"
-                  @click.prevent="wishGame">{{card.wish ? 'Уже в желаемом' : 'В желаемое'}}</button>
+                  v-bind:class="{'btn-outline-dark disabled': wish}"
+                  @click.prevent="wishGame">{{wish ? 'Уже в желаемом' : 'В желаемое'}}</button>
         </div>
-        <small class="text-muted">{{card.year}}</small>
       </div>
+      <div v-if="bought === null"
+           class="cost-money">Приобретено</div>
+      <small class=" d-flex justify-content-end text-muted">{{game.date_of_release}}</small>
     </div>
   </div>
 </template>
@@ -51,32 +56,32 @@
 <script>
 export default {
   name: 'Card',
-  props: ['card'],
+  props: ['game', 'game_cost', 'boughtOut', 'wishOut'],
   data() {
     return {
-      info: {
-        name: 'Minecraft',
-        cost: '124'
-      },
-      costWithDiscount: -1
+      costWithDiscount: -1,
+      bought: this.boughtOut,
+      wish: this.wishOut
     }
   },
   methods: {
     buyGame() {
-      let cash = 130; // ЗДЕСЬ ДЕНЬГИ ***
-      let cost = this.card.cost;
+      let cash = 600; // ЗДЕСЬ ДЕНЬГИ ***
+      let cost = parseFloat(this.game_cost.cost);
       let costWithDiscount = this.costWithDiscount;
-      if (costWithDiscount !== -1 && cash > costWithDiscount) {
-        this.card.bought = true;
-        cash -= costWithDiscount;
-      } else if (cash > costWithDiscount) {
-        this.card.bought = true;
+      if (costWithDiscount !== -1) {
+        if (cash >= costWithDiscount) {
+          this.bought = true;
+          cash -= costWithDiscount;
+        }
+      } else if (cash >= cost) {
+        this.bought = true;
         cash -= cost;
       }
       // Здесь обновить БД ***
     },
     wishGame() {
-      this.card.wish = true;
+      this.wish = true;
       // Здесь обновить БД ***
     }
   }
@@ -88,10 +93,6 @@ export default {
   font-size: 1.125rem;
   text-anchor: middle;
   user-select: none;
-}
-
-.card-body {
-  height: 250px;
 }
 
 .card-text {

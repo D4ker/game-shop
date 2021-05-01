@@ -2,7 +2,7 @@
   <main>
     <section class="py-3 text-left">
       <div class="container">
-        <h1 class="fw-light">Библиотека</h1>
+        <h1 class="fw-light">Список желаемого</h1>
         <div class="sorter">
           <p class="sorter-name">Сортировать: </p>
           <a class="nav-link dropdown-toggle" id="sorterDropdown" role="button"
@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-    <div class="container" v-else>В библиотеке пока нет игр.</div>
+    <div class="container" v-else>В списке желаемого пока нет игр.</div>
     <Pagination />
   </main>
 </template>
@@ -45,7 +45,7 @@ import Pagination from '../components/Pagination.vue'
 import { request } from '@/frontend'
 
 export default {
-  name: 'Library',
+  name: 'Wishlist',
   components: {
     Card,
     Pagination
@@ -83,7 +83,7 @@ export default {
   },
   async mounted() {
     let id = 3;
-    let games = await request('/api/select/library', 'POST', {id: id});
+    let games = await request('/api/select/wishlist', 'POST', {id: id});
     this.games = games;
   }
 }
