@@ -25,7 +25,7 @@
             <button class="btn btn-profile nav-link dropdown-toggle" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">Профиль</button>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Настройки</a></li>
+              <li><router-link class="dropdown-item" to="/settings">Настройки</router-link></li>
               <li><router-link class="dropdown-item" to="/library">Библиотека</router-link></li>
               <li><router-link class="dropdown-item" to="/wishlist">Список желаемого</router-link></li>
               <li><router-link class="dropdown-item" to="/friends">Друзья</router-link></li>

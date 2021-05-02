@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div>Friends</div>
+    <div>Settings</div>
     <div v-if="loading"
          class="d-flex justify-content-center">
-      <Loader />
+      <Loader/>
     </div>
   </div>
 </template>
@@ -12,7 +12,7 @@
 import Loader from "@/components/Loader";
 
 export default {
-  name: 'Friends',
+  name: 'Settings',
   components: {
     Loader
   },

@@ -26,5 +26,9 @@ export default new Router({
             path: '/friends',
             component: () => import('./views/Friends.vue')
         },
+        {
+            path: '/settings',
+            component: () => import('./views/Settings.vue')
+        },
     ]
 })

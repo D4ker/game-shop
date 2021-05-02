@@ -16,8 +16,14 @@
         </div>
       </div>
     </section>
+
+    <div v-if="loading"
+         class="d-flex justify-content-center">
+      <Loader />
+    </div>
+
     <div class="album py-5 bg-light"
-         v-if="games.length">
+         v-else-if="games.length">
       <div class="container">
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
@@ -43,17 +49,20 @@
 import Card from '../components/Card.vue'
 import Pagination from '../components/Pagination.vue'
 import { request } from '@/frontend'
+import Loader from "@/components/Loader";
 
 export default {
   name: 'Library',
   components: {
     Card,
-    Pagination
+    Pagination,
+    Loader
   },
   data() {
     return {
       games: [],
-      sorter: 'Не выбрано'
+      sorter: 'Не выбрано',
+      loading: true
     }
   },
   methods: {
@@ -85,6 +94,7 @@ export default {
     let id = 3;
     let games = await request('/api/select/library', 'POST', {id: id});
     this.games = games;
+    this.loading = false;
   }
 }
 </script>

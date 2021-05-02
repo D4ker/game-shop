@@ -17,8 +17,12 @@
         </div>
       </div>
     </section>
+    <div v-if="loading"
+         class="d-flex justify-content-center">
+      <Loader />
+    </div>
     <div class="album py-5 bg-light"
-         v-if="games.length">
+         v-else-if="games.length">
       <div class="container">
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
@@ -43,20 +47,23 @@
 <script>
 import Card from '../components/Card.vue'
 import Pagination from '../components/Pagination.vue'
+import Loader from '../components/Loader.vue'
 import { request } from '@/frontend'
 
 export default {
   name: 'Main',
   components: {
     Card,
-    Pagination
+    Pagination,
+    Loader
   },
   data() {
     return {
       games: [],
       library: [],
       wishlist: [],
-      sorter: 'Не выбрано'
+      sorter: 'Не выбрано',
+      loading: true
     }
   },
   methods: {
@@ -102,6 +109,7 @@ export default {
     this.games = games;
     this.library = library;
     this.wishlist = wishlist;
+    this.loading = false;
   }
 }
 </script>
