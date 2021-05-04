@@ -10,6 +10,10 @@ router.post('/registration', controller.registration);
 
 router.post('/login', controller.login);
 
+router.get('/check/token', authMiddleware, controller.checkToken);
+
+router.get('/select/countries', controller.selectCountries);
+
 router.get('/select/games', controller.selectGames);
 
 router.post('/select/library', authMiddleware, controller.selectLibrary);

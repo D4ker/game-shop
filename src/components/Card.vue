@@ -82,22 +82,15 @@ export default {
   },
   methods: {
     async buyGame() {
-      let id = 3;
-      let url = '/api/insert/library';
-      let data = {
-        buyer_id: id,
+      const res = await request('/api/insert/library', 'POST', {
         game_cost_id: this.game_cost.id
-      };
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
       });
-      let status = response.status;
+      const status = res.status;
       if (status === 200) {
         this.bought = true;
       } else if (status === 402) {
         console.log('Недостаточно средств');
+        this.$emit('toastVisible()');
       }
     },
     async wishGame() {

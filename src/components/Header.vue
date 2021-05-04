@@ -21,7 +21,18 @@
             <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Поиск</button>
           </form>
-          <div class="nav-item dropdown">
+          <div v-if="!authorised">
+            <button class="btn btn-profile nav-link" type="button" aria-expanded="false"
+                    data-bs-toggle="modal" data-bs-target="#authModal">Регистрация/Вход</button>
+            <AuthModal
+                v-bind:regVisible="true"
+            />
+            <RegModal
+                v-bind:authVisible="true"
+            />
+          </div>
+          <div class="nav-item dropdown"
+               v-if="authorised">
             <button class="btn btn-profile nav-link dropdown-toggle" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">Профиль</button>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -30,7 +41,7 @@
               <li><router-link class="dropdown-item" to="/wishlist">Список желаемого</router-link></li>
               <li><router-link class="dropdown-item" to="/friends">Друзья</router-link></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Выход</a></li>
+              <li @click.prevent="logout()"><router-link class="dropdown-item" to="/">Выход</router-link></li>
             </ul>
           </div>
         </div>
@@ -38,6 +49,38 @@
     </nav>
   </header>
 </template>
+
+<script>
+import {deleteCookie, request} from '@/frontend'
+import AuthModal from "@/components/AuthModal";
+import RegModal from "@/components/RegModal";
+
+export default {
+  name: 'Header',
+  components: {
+    AuthModal,
+    RegModal
+  },
+  data() {
+    return {
+      authorised: false
+    }
+  },
+  methods: {
+    logout() {
+      deleteCookie('token');
+      location.reload();
+    }
+  },
+  async mounted() {
+    let res = await request('/api/check/token');
+    if (res.status === 200) {
+      this.authorised = true;
+    }
+  }
+}
+
+</script>
 
 <style scoped>
 .dropdown-menu-right {

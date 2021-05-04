@@ -42,6 +42,9 @@
       </div>
     </div>
     <div class="container" v-else>В магазине пока нет игр.</div>
+    <Toast
+        v-if="authorised"
+    />
     <Pagination />
   </main>
 </template>
@@ -50,11 +53,13 @@
 import Card from '../components/Card.vue'
 import Pagination from '../components/Pagination.vue'
 import Loader from '../components/Loader.vue'
-import { request } from '@/frontend'
+import {request} from '@/frontend'
+import Toast from "@/components/Toast";
 
 export default {
   name: 'Main',
   components: {
+    Toast,
     Card,
     Pagination,
     Loader
@@ -66,7 +71,8 @@ export default {
       wishlist: [],
       sorter: 'Не выбрано',
       authorised: false,
-      loading: true
+      loading: true,
+      toast: false
     }
   },
   methods: {
@@ -102,6 +108,9 @@ export default {
         });
       }
       this.sorter = text;
+    },
+    toastVisible() {
+      this.toast = true;
     }
   },
   async mounted() {

@@ -7,9 +7,14 @@ module.exports = function authMiddleware (req, res, next) {
     }
 
     try {
-        const token = req.headers.authorization.split(" ")[1];
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(403).json({message: "Авторизация не удалась: заголовок пуст"});
+        }
+
+        const token = authHeader.split(" ")[1];
         if (!token) {
-            return res.status(403).json({message: "Авторизация не удалась"});
+            return res.status(403).json({message: "Авторизация не удалась: токен отсутствует"});
         }
         const decodedData = jwt.verify(token, secret);
         req.user = decodedData;

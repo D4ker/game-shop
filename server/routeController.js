@@ -9,7 +9,7 @@ const {secret} = require('./config/config');
 const SALT = 7;
 const EXPIRES_IN = "24h";
 
-const {buyer, game, game_cost, library, wishlist} = require('./models');
+const {buyer, game, game_cost, library, wishlist, country} = require('./models');
 
 db.sequelize.sync()
     .then(result => {
@@ -52,9 +52,15 @@ class routeController {
                     email: email,
                     cash: 0
                 });
-                res.status(200).json({message: 'Регистрация успешно выполнена'});
+
+                const token = generateAccessToken(user.id);
+
+                res.status(200).json({
+                    token
+                });
             } else {
-                return res.status(400).json({message: 'Ошибка регистрации'});
+                return res.status(400).json({message: 'Ошибка регистрации. ' +
+                        'Пользователь с таким логином/паролем/телефоном уже существует'});
             }
         } catch (e) {
             console.log(e);
@@ -91,6 +97,19 @@ class routeController {
         }
     }
 
+    async checkToken(req, res) {
+        res.status(200).json({message: 'Успешная авторизация'});
+    }
+
+    async selectCountries(req, res) {
+        await country.findAll().then(countriesDB => {
+            return res.status(200).json(countriesDB);
+        }).catch((e) => {
+            console.log(e);
+            return res.status(500).json({message: 'Ошибка при получении стран'});
+        });
+    }
+
     async selectGames(req, res) {
         game.hasMany(game_cost, {foreignKey: 'game_id'});
         game_cost.belongsTo(game, {foreignKey: 'id'});
@@ -111,7 +130,7 @@ class routeController {
         await db.sequelize.query(
             `SELECT * FROM game WHERE id IN (SELECT gc.game_id FROM library l
              JOIN game_cost gc ON l.game_cost_id = gc.id 
-             WHERE l.buyer_id = ${req.body.id})`, {
+             WHERE l.buyer_id = ${req.user.id})`, {
                 instance: library,
                 model: game,
                 mapToModel: true
@@ -126,7 +145,7 @@ class routeController {
     async selectWishlist(req, res) {
         await db.sequelize.query(
             `SELECT * FROM game WHERE id IN
-             (SELECT game_id FROM wishlist w WHERE w.buyer_id = ${req.body.id})`, {
+             (SELECT game_id FROM wishlist w WHERE w.buyer_id = ${req.user.id})`, {
                 instance: wishlist,
                 model: game,
                 mapToModel: true
@@ -141,7 +160,7 @@ class routeController {
     async insertLibrary(req, res) {
         try {
             let buyerDB = await db.sequelize.query(
-                `SELECT * FROM buyer WHERE id = ${req.body.buyer_id}`, {
+                `SELECT * FROM buyer WHERE id = ${req.user.id}`, {
                     model: buyer,
                     mapToModel: true
                 });
@@ -172,7 +191,7 @@ class routeController {
             const result = await db.sequelize.transaction(async (t) => {
                 try {
                     await db.sequelize.query(
-                        `UPDATE buyer SET cash = ${cash} WHERE id = ${req.body.buyer_id}`, {
+                        `UPDATE buyer SET cash = ${cash} WHERE id = ${req.user.id}`, {
                             type: QueryTypes.UPDATE,
                             transaction: t,
                             model: buyer,
@@ -181,7 +200,7 @@ class routeController {
 
                     await db.sequelize.query(
                         `INSERT INTO library (buyer_id, game_cost_id, timestamp_of_purchase)
-                     VALUES (${req.body.buyer_id}, ${req.body.game_cost_id}, 
+                     VALUES (${req.user.id}, ${req.body.game_cost_id}, 
                      to_timestamp(${Date.now()} / 1000.0))`, {
                             type: QueryTypes.INSERT,
                             transaction: t,
@@ -203,7 +222,7 @@ class routeController {
     async insertWishlist(req, res) {
         await db.sequelize.query(
             `INSERT INTO wishlist (buyer_id, game_id)
-             VALUES (${req.body.buyer_id}, ${req.body.game_id})`, {
+             VALUES (${req.user.id}, ${req.body.game_id})`, {
                 model: wishlist,
                 mapToModel: true
             }).then(wishlistDB => {
@@ -217,7 +236,7 @@ class routeController {
     async deleteWishlist(req, res) {
         await db.sequelize.query(
             `DELETE FROM wishlist
-             WHERE buyer_id = ${req.body.buyer_id} AND game_id = ${req.body.game_id}`, {
+             WHERE buyer_id = ${req.user.id} AND game_id = ${req.body.game_id}`, {
                 model: wishlist,
                 mapToModel: true
             }).then(wishlistDB => {
