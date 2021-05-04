@@ -34,6 +34,7 @@
                 v-bind:game_cost="null"
                 v-bind:boughtOut="null"
                 v-bind:wishOut="null"
+                v-bind:state="'library'"
             />
 
           </div>
@@ -91,9 +92,8 @@ export default {
     }
   },
   async mounted() {
-    let id = 3;
-    let games = await request('/api/select/library', 'POST', {id: id});
-    this.games = games;
+    let games = await request('/api/select/library', 'POST');
+    this.games = await games.json();
     this.loading = false;
   }
 }

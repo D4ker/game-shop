@@ -31,8 +31,10 @@
             <Card
                 v-bind:game="game"
                 v-bind:game_cost="game.game_costs[0]"
-                v-bind:boughtOut="!library.find(lib => lib.id === game.id)"
-                v-bind:wishOut="!wishlist.find(wish => wish.id === game.id)"
+                v-bind:boughtOut="!!library.find(lib => lib.id === game.id)"
+                v-bind:wishOut="!!wishlist.find(wish => wish.id === game.id)"
+                v-bind:authorised="authorised"
+                v-bind:state="'main'"
             />
 
           </div>
@@ -63,6 +65,7 @@ export default {
       library: [],
       wishlist: [],
       sorter: 'Не выбрано',
+      authorised: false,
       loading: true
     }
   },
@@ -102,14 +105,22 @@ export default {
     }
   },
   async mounted() {
-    let id = 3;
     let games = await request('/api/select/games');
-    let library = await request('/api/select/library', 'POST', {id: id});
-    let wishlist = await request('/api/select/wishlist', 'POST', {id: id});
-    this.games = games;
-    this.library = library;
-    this.wishlist = wishlist;
-    this.loading = false;
+    let library = await request('/api/select/library', 'POST');
+    let wishlist = await request('/api/select/wishlist', 'POST');
+    if (games.status === 200) {
+      this.games = await games.json();
+      if (library.status === 200) {
+        this.library = await library.json();
+        if (wishlist.status === 200) {
+          this.wishlist = await wishlist.json();
+          this.authorised = true;
+          this.loading = false;
+        }
+      } else {
+        this.loading = false;
+      }
+    }
   }
 }
 </script>

@@ -12,16 +12,17 @@
     <div class="card-body">
       <div>
         <h4>{{game.name}}</h4>
-        <div v-if="bought !== null"
+        <div v-if="state === 'main'"
             class="cost-container">
           <div class="cost-name">Цена: </div>
           <div class="cost-money"
                v-bind:class="{'cost-old': parseInt(game_cost.discount) > 0}">
-            {{parseFloat(game_cost.cost).toFixed(2)}}$
+            {{parseFloat(game_cost.cost.replace(/\s/g, '').replace(/,/, '.')).toFixed(2)}}$
           </div>
           <div class="cost-money"
                v-if="parseInt(game_cost.discount) > 0">
-            {{costWithDiscount = (parseFloat(game_cost.cost) * (1 - parseInt(game_cost.discount) / 100)).toFixed(2)}}$
+            {{costWithDiscount = (parseFloat(game_cost.cost.replace(/\s/g, '')
+              .replace(/,/, '.')) * (1 - parseInt(game_cost.discount) / 100)).toFixed(2)}}$
           </div>
           <div class="cost-discount"
                v-if="parseInt(game_cost.discount) > 0">
@@ -30,7 +31,13 @@
         </div>
       </div>
       <p class="card-text">{{game.description}}</p>
-      <div v-if="bought !== null"
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-info-game disabled"
+                  @click.prevent="infoGame">Подробнее</button>
+        </div>
+      </div>
+      <div v-if="state === 'main' && authorised"
            class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
           <button type="button" class="btn btn-sm btn-outline-success"
@@ -38,7 +45,7 @@
                   @click.prevent="buyGame">{{bought ? 'Приобретено' : 'Купить'}}</button>
         </div>
       </div>
-      <div v-if="wish !== null"
+      <div v-if="state === 'main' && authorised"
            class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
           <button type="button" class="btn btn-sm btn-outline-warning"
@@ -46,7 +53,14 @@
                   @click.prevent="wishGame">{{wish ? 'Уже в желаемом' : 'В желаемое'}}</button>
         </div>
       </div>
-      <div v-if="bought === null"
+      <div v-if="state === 'wishlist'"
+           class="d-flex justify-content-between align-items-center">
+        <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-outline-danger"
+                  @click.prevent="$emit('remove-wish-game', game.id)">Удалить</button>
+        </div>
+      </div>
+      <div v-if="state === 'library'"
            class="cost-money">Приобретено</div>
       <small class=" d-flex justify-content-end text-muted">{{game.date_of_release}}</small>
     </div>
@@ -54,9 +68,11 @@
 </template>
 
 <script>
+import {request} from "@/frontend";
+
 export default {
   name: 'Card',
-  props: ['game', 'game_cost', 'boughtOut', 'wishOut'],
+  props: ['game', 'game_cost', 'boughtOut', 'wishOut', 'state', 'authorised'],
   data() {
     return {
       costWithDiscount: -1,
@@ -65,24 +81,33 @@ export default {
     }
   },
   methods: {
-    buyGame() {
-      let cash = 600; // ЗДЕСЬ ДЕНЬГИ ***
-      let cost = parseFloat(this.game_cost.cost);
-      let costWithDiscount = this.costWithDiscount;
-      if (costWithDiscount !== -1) {
-        if (cash >= costWithDiscount) {
-          this.bought = true;
-          cash -= costWithDiscount;
-        }
-      } else if (cash >= cost) {
+    async buyGame() {
+      let id = 3;
+      let url = '/api/insert/library';
+      let data = {
+        buyer_id: id,
+        game_cost_id: this.game_cost.id
+      };
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      let status = response.status;
+      if (status === 200) {
         this.bought = true;
-        cash -= cost;
+      } else if (status === 402) {
+        console.log('Недостаточно средств');
       }
-      // Здесь обновить БД ***
     },
-    wishGame() {
+    async wishGame() {
+      await request('/api/insert/wishlist', 'POST', {
+        game_id: this.game.id
+      });
       this.wish = true;
-      // Здесь обновить БД ***
+    },
+    infoGame() {
+
     }
   }
 }
@@ -131,5 +156,20 @@ export default {
 
 .btn {
   margin-top: 5px;
+}
+
+.btn-info-game {
+  border-color: #3344cd;
+  color: #3344cd;
+}
+
+.btn-info-game:hover, .btn-info-game:active {
+  color: #ffffff;
+  background-color: #3344cd;
+  border-color: #3344cd;
+}
+
+.btn-info-game:focus {
+  box-shadow: 0 0 0 0.25rem rgb(51, 68, 205, .5);
 }
 </style>

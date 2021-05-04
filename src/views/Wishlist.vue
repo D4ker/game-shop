@@ -34,6 +34,8 @@
                 v-bind:game_cost="null"
                 v-bind:boughtOut="null"
                 v-bind:wishOut="null"
+                v-bind:state="'wishlist'"
+                @remove-wish-game="removeWishGame"
             />
 
           </div>
@@ -88,12 +90,17 @@ export default {
         });
       }
       this.sorter = text;
+    },
+    async removeWishGame(game_id) {
+      await request('/api/delete/wishlist', 'DELETE', {
+        game_id: game_id
+      });
+      this.games = this.games.filter(g => g.id !== game_id);
     }
   },
   async mounted() {
-    let id = 3;
-    let games = await request('/api/select/wishlist', 'POST', {id: id});
-    this.games = games;
+    let games = await request('/api/select/wishlist', 'POST');
+    this.games = await games.json();
     this.loading = false;
   }
 }
