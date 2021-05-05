@@ -2,11 +2,8 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-const db = require('./models');
 const https = require('https');
 const fs = require('fs');
-
-const { game } = require('./models');
 
 const httpPort = 8000;
 
@@ -26,11 +23,7 @@ app.use(bodyParser.json());
 app.use('/api', require('./route'));
 
 if (process.env.NODE_ENV === 'production') {
-    app.use('/api', express.static(path.join(__dirname, '../dist')));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
-    });
+    app.use('/', express.static(path.join(__dirname, '../dist')));
 }
 
 app.listen(httpPort, () => {

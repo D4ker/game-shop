@@ -16,9 +16,9 @@ router.get('/select/countries', controller.selectCountries);
 
 router.get('/select/games', controller.selectGames);
 
-router.post('/select/library', authMiddleware, controller.selectLibrary);
+router.get('/select/library', authMiddleware, controller.selectLibrary);
 
-router.post('/select/wishlist', authMiddleware, controller.selectWishlist);
+router.get('/select/wishlist', authMiddleware, controller.selectWishlist);
 
 router.post('/insert/library', authMiddleware, controller.insertLibrary);
 

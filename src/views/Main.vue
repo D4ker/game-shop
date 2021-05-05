@@ -115,8 +115,8 @@ export default {
   },
   async mounted() {
     let games = await request('/api/select/games');
-    let library = await request('/api/select/library', 'POST');
-    let wishlist = await request('/api/select/wishlist', 'POST');
+    let library = await request('/api/select/library');
+    let wishlist = await request('/api/select/wishlist');
     if (games.status === 200) {
       this.games = await games.json();
       if (library.status === 200) {
