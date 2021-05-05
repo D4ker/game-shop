@@ -6,7 +6,10 @@ export async function request(url, method = 'GET', data = null) {
         body = JSON.stringify(data);
     }
 
-    headers['Authorization'] = `Bearer ${getCookie('token')}`;
+    const token = getCookie('token');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
 
     const response = await fetch(url, {
         method: method,

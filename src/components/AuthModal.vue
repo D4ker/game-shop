@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {request, setCookie} from "@/frontend";
+import {request, setCookie} from "@/lib";
 
 export default {
   name: 'AuthModal',

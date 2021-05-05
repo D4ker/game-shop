@@ -17,11 +17,11 @@
           <div class="cost-name">Цена: </div>
           <div class="cost-money"
                v-bind:class="{'cost-old': parseInt(game_cost.discount) > 0}">
-            {{parseFloat(game_cost.cost.replace(/\s/g, '').replace(/,/, '.')).toFixed(2)}}$
+            {{parseFloat(game_cost.cost.replace(/[^0-9.,]/g, '').replace(/,/, '.')).toFixed(2)}}$
           </div>
           <div class="cost-money"
                v-if="parseInt(game_cost.discount) > 0">
-            {{costWithDiscount = (parseFloat(game_cost.cost.replace(/\s/g, '')
+            {{costWithDiscount = (parseFloat(game_cost.cost.replace(/[^0-9.,]/g, '')
               .replace(/,/, '.')) * (1 - parseInt(game_cost.discount) / 100)).toFixed(2)}}$
           </div>
           <div class="cost-discount"
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import {request} from "@/frontend";
+import {request} from "@/lib";
 
 export default {
   name: 'Card',

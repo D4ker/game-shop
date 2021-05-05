@@ -53,7 +53,7 @@
 import Card from '../components/Card.vue'
 import Pagination from '../components/Pagination.vue'
 import Loader from '../components/Loader.vue'
-import {request} from '@/frontend'
+import {request} from '@/lib'
 import Toast from "@/components/Toast";
 
 export default {

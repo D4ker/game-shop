@@ -171,8 +171,8 @@ class routeController {
                     mapToModel: true
                 });
 
-            let cash = parseFloat(buyerDB[0].cash.replace(/\s/g, '').replace(/,/, '.'));
-            let cost = parseFloat(gameCostDB[0].cost.replace(/\s/g, '').replace(/,/, '.'));
+            let cash = parseFloat(buyerDB[0].cash.replace(/[^0-9.,]/g, '').replace(/,/, '.'));
+            let cost = parseFloat(gameCostDB[0].cost.replace(/[^0-9.,]/g, '').replace(/,/, '.'));
 
             if (gameCostDB[0].discount !== null) {
                 let costWithDiscount =

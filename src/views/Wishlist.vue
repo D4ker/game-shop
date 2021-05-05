@@ -50,7 +50,7 @@
 <script>
 import Card from '../components/Card.vue'
 import Pagination from '../components/Pagination.vue'
-import { request } from '@/frontend'
+import { request } from '@/lib'
 import Loader from "@/components/Loader";
 
 export default {
@@ -99,7 +99,7 @@ export default {
     }
   },
   async mounted() {
-    let games = await request('/api/select/wishlist', 'POST');
+    let games = await request('/api/select/wishlist');
     this.games = await games.json();
     this.loading = false;
   }

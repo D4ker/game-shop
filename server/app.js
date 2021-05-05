@@ -10,8 +10,8 @@ const httpPort = 8000;
 const app = express();
 
 const httpsOptions = {
-    key: fs.readFileSync("key.pem"), // путь к ключу
-    cert: fs.readFileSync("cert.pem") // путь к сертификату
+    key: fs.readFileSync('key.pem'), // путь к ключу
+    cert: fs.readFileSync('cert.pem') // путь к сертификату
 }
 
 const httpsServer = https.createServer(httpsOptions, app);

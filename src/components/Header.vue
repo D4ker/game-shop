@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import {deleteCookie, request} from '@/frontend'
+import {deleteCookie, request} from '@/lib'
 import AuthModal from "@/components/AuthModal";
 import RegModal from "@/components/RegModal";
 
