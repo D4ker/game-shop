@@ -101,7 +101,7 @@ export default {
         this.games.sort((g1, g2) => {
           let getCost = (g) => {
             let discount = parseInt(g.game_costs[0].discount);
-            let cost = parseFloat(g.game_costs[0].cost);
+            let cost = parseFloat(g.game_costs[0].cost.replace(/[^0-9.,]/g, '').replace(/,/, '.'));
             return isNaN(discount) ? cost : (cost * (1 - discount / 100));
           }
           return getCost(g1) - getCost(g2);
