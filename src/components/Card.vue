@@ -26,7 +26,7 @@
           </div>
           <div class="cost-discount"
                v-if="parseInt(game_cost.discount) > 0">
-            {{parseInt(game_cost.discount)}}%
+            -{{parseInt(game_cost.discount)}}%
           </div>
         </div>
       </div>

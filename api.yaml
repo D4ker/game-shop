@@ -1,0 +1,472 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Game Shop API
+  description: Game Shop API Information
+servers:
+  - url: http://d4ker.duckdns.org
+  - url: https://d4ker.duckdns.org
+
+paths:
+  /api/registration:
+    post:
+      tags:
+        - Регистрация/Авторизация
+      summary: Используется для регистрации новых пользователей
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+      responses:
+        '200':
+          description: Успешная регистрация. Возвращает jwt-токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Ошибка регистрации. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка регистрации'
+
+  /api/login:
+    post:
+      tags:
+        - Регистрация/Авторизация
+      summary: Используется для авторизации пользователей
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Успешная авторизация. Возвращает jwt-токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Ошибка авторизации. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка авторизации'
+
+  /api/check/token:
+    get:
+      tags:
+        - Регистрация/Авторизация
+      summary: Используется для авторизации пользователей по jwt-токену
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Успешная авторизация по jwt-токену
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Успешная авторизация'
+        '403':
+          description: Авторизация не пройдена. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Авторизация не удалась'
+
+  /api/select/countries:
+    get:
+      tags:
+        - Получение данных
+      summary: Используется для получения списка стран
+      responses:
+        '200':
+          description: Успешное получение списка стран. Возвращает список
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountriesResponse'
+        '500':
+          description: Ошибка при получении списка стран. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при получении стран'
+
+  /api/select/games:
+    get:
+      tags:
+        - Получение данных
+      summary: Используется для получения списка игр
+      responses:
+        '200':
+          description: Успешное получение списка игр. Возвращает список
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GamesWithCostResponse'
+        '500':
+          description: Ошибка при получении списка игр. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при получении списка игр'
+
+  /api/select/library:
+    get:
+      tags:
+        - Получение данных
+      summary: Используется для получения библиотеки пользователя
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Успешное получение библиотеки. Возвращает список купленных пользователем игр
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GamesResponse'
+        '500':
+          description: Ошибка при получении библиотеки. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при получении библиотеки'
+
+  /api/select/wishlist:
+    get:
+      tags:
+        - Получение данных
+      summary: Используется для получения списка желаемого пользователя
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Успешное получение списка желаемого. Возвращает список желаемых пользователем игр
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GamesResponse'
+        '500':
+          description: Ошибка при получении списка желаемого. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при получении списка желаемого'
+
+  /api/insert/library:
+    post:
+      tags:
+        - Добавление данных
+      summary: Используется для покупки новой игры пользователем
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuyRequest'
+      responses:
+        '200':
+          description: Игра успешно приобретена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Игра успешно приобретена'
+        '402':
+          description: Ошибка при покупке игры. Недостаточно средств
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при покупке игры: Недостаточно средств'
+        '500':
+          description: Ошибка при покупке игры. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при покупке игры'
+
+  /api/insert/wishlist:
+    post:
+      tags:
+        - Добавление данных
+      summary: Используется для добавления пользователем новой игры в список желаемого
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WishRequest'
+      responses:
+        '200':
+          description: Игра успешно добавлена в список желаемого
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Игра успешно добавлена в список желаемого'
+        '500':
+          description: Ошибка при добавлении игры в список желаемого. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при добавлении игры в список желаемого'
+
+  /api/delete/wishlist:
+    delete:
+      tags:
+        - Удаление данных
+      summary: Используется для удаления пользователем игры из списка желаемого
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WishRequest'
+      responses:
+        '200':
+          description: Игра успешно удалена из списка желаемого
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Игра успешно удалена из списка желаемого'
+        '500':
+          description: Ошибка при удалении игры из списка желаемого. Возвращает сообщение с ошибкой
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: 'Ошибка при удалении игры из списка желаемого'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegistrationRequest:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone_number:
+          type: string
+        birth:
+          type: string
+        country_id:
+          type: integer
+        email:
+          type: string
+      example:
+        login: 'alex2000'
+        password: 'password'
+        first_name: 'Alex'
+        last_name: 'Johnson'
+        phone_number: '+79842919832'
+        birth: '2000-05-26'
+        country_id: 1
+        email: 'Alex-Johnson@gmail.com'
+
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      example:
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAwMDMsImlhdCI6MTYyMDMxMDYxMCwiZXhwIjoxNjIwMzk3MDEwfQ.Tyw7ogRc6Y94eVq531zddz6MeptB3UnqpJ8IvHV_JXc'
+
+    LoginRequest:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+      example:
+        - login: 'alex2000'
+          password: 'password'
+
+    CountriesResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+      example:
+        - id: 1
+          name: 'Australia'
+        - id: 2
+          name: 'Austria'
+        - id: 3
+          name: 'Azerbaijan'
+
+    GamesWithCostResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          name:
+            type: string
+          description:
+            type: string
+          date_of_release:
+            type: string
+          game_costs:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                game_id:
+                  type: integer
+                country_id:
+                  type: integer
+                cost:
+                  type: string
+                discount:
+                  type: integer
+                timestamp_of_price_update:
+                  type: string
+      example:
+        - id: 1
+          name: 'Later light themselves sister avoid concern billion'
+          description: 'Activity compare exist letter recognize experience. Guess stock kitchen east husband film. Indicate feel name.'
+          date_of_release: '1988-12-10'
+          game_costs:
+            id: 1
+            game_id: 1
+            country_id: 152
+            cost: '$586.00'
+            discount: 46
+            timestamp_of_price_update: '2021-01-14T10:29:36.000Z'
+        - id: 2
+          name: 'Form standard hotel artist travel physical thing name'
+          description: 'Game travel wife represent. Development history likely care.\nEstablish catch six source born lawyer. Relate condition image should involve. Author particularly along commercial particularly movie.'
+          date_of_release: '1981-08-04'
+          game_costs:
+            - id: 5
+              game_id: 2
+              country_id: 48
+              cost: '$251.00'
+              discount: 10
+              timestamp_of_price_update: '2021-01-20T03:38:41.000Z'
+            - id: 12
+              game_id: 2
+              country_id: 132
+              cost: '$127.00'
+              discount: null
+              timestamp_of_price_update: '2020-12-22T20:33:42.000Z'
+
+    GamesResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date_of_release:
+          type: string
+      example:
+        - id: 1
+          name: 'Later light themselves sister avoid concern billion'
+          description: 'Activity compare exist letter recognize experience. Guess stock kitchen east husband film. Indicate feel name.'
+          date_of_release: '1988-12-10'
+        - id: 2
+          name: 'Form standard hotel artist travel physical thing name'
+          description: 'Game travel wife represent. Development history likely care.\nEstablish catch six source born lawyer. Relate condition image should involve. Author particularly along commercial particularly movie.'
+          date_of_release: '1981-08-04'
+
+    BuyRequest:
+      type: object
+      properties:
+        game_cost_id:
+          type: integer
+      example:
+        game_cost_id: 3
+
+    WishRequest:
+      type: object
+      properties:
+        game_id:
+          type: integer
+      example:
+        game_id: 5

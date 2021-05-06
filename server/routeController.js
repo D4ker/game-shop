@@ -175,8 +175,7 @@ class routeController {
             let cost = parseFloat(gameCostDB[0].cost.replace(/[^0-9.,]/g, '').replace(/,/, '.'));
 
             if (gameCostDB[0].discount !== null) {
-                let costWithDiscount =
-                    (parseFloat(gameCostDB[0].cost) * (1 - parseInt(gameCostDB[0].discount) / 100)).toFixed(2);
+                let costWithDiscount = cost * (1 - parseInt(gameCostDB[0].discount) / 100);
                 if (cash >= costWithDiscount) {
                     cash -= costWithDiscount;
                 } else {
